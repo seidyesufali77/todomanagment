@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @Setter
 public class TodoApiException extends RuntimeException{
+    // Custom exception class for Todo API
     private HttpStatus httpStatus;
     private String message;
 
