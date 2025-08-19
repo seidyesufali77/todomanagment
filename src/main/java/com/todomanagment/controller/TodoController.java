@@ -4,21 +4,24 @@ import com.todomanagment.dto.TodoDto;
 import com.todomanagment.exception.ResourceNotFoundException;
 import com.todomanagment.service.TodoService;
 import com.todomanagment.service.impl.TodoServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 @CrossOrigin(origins = "*")
 @RestController
+@EnableMethodSecurity
 @RequestMapping("/api/todos")
 public class TodoController {
     @Autowired
     private TodoServiceImpl todoService;
     @PostMapping("/add")
-    public ResponseEntity<TodoDto> addTodo(@RequestBody  TodoDto addTodoDto) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<TodoDto> addTodo(@Valid @RequestBody  TodoDto addTodoDto) {
         TodoDto saveTodo = todoService.addTodo(addTodoDto);
         return new ResponseEntity<>(saveTodo, HttpStatus.CREATED);
     }
@@ -41,7 +44,7 @@ public class TodoController {
         }
     }
     @PutMapping("/update/{id}")
-    public ResponseEntity<TodoDto> updateTodo(@RequestBody TodoDto todoDto, @PathVariable long id){
+    public ResponseEntity<TodoDto> updateTodo(@Valid @RequestBody TodoDto todoDto, @PathVariable long id){
         TodoDto updatedTodo = todoService.updateTodo(todoDto, id);
         if (updatedTodo != null) {
             return new ResponseEntity<>(updatedTodo, HttpStatus.OK);
