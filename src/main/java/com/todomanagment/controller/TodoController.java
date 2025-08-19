@@ -1,5 +1,4 @@
 package com.todomanagment.controller;
-
 import com.todomanagment.dto.TodoDto;
 import com.todomanagment.exception.ResourceNotFoundException;
 import com.todomanagment.service.TodoService;
@@ -61,7 +60,6 @@ public class TodoController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
         @PatchMapping("/complete/{id}")
         public ResponseEntity<TodoDto> completeTodo (@PathVariable long id){
             TodoDto completedTodo=todoService.completeTodo(id);
