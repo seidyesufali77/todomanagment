@@ -1,5 +1,6 @@
 package com.todomanagment.service.impl;
 
+import com.todomanagment.dto.LoginDto;
 import com.todomanagment.dto.RegisterDto;
 import com.todomanagment.entity.Role;
 import com.todomanagment.entity.User;
@@ -10,6 +11,10 @@ import com.todomanagment.service.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +26,7 @@ import java.util.Set;
 public class AuthServiceImpl implements AuthService {
  private UserRepository userRepository;
     private RoleRepository roleRepository;
+    private AuthenticationManager authenticationManager;
 
     private PasswordEncoder passwordEncoder;
     @Override
@@ -43,8 +49,17 @@ public class AuthServiceImpl implements AuthService {
         if (userRole == null) {
             throw new TodoApiException(HttpStatus.BAD_REQUEST, "User role not found");
         }
+        roles.add(userRole);
         user.setRoles(roles);
         userRepository.save(user);
         return "The user has been registered successfully";
+    }
+
+    @Override
+    public String login( LoginDto loginDto ){
+       Authentication authentication= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken
+                (loginDto.getUsernameOrEmail(),loginDto.getPassword()));
+       SecurityContextHolder.getContext().setAuthentication(authentication);
+        return "user logged in successfully";
     }
 }
